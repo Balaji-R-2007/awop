@@ -1,7 +1,10 @@
 import React from 'react'
-
-export const App = () => {
+import Chat from './components/chat'
+const App = () => {
   return (
-    <div>App</div>
+    <div>
+      <Chat/>
+    </div>
   )
 }
+export default App;
