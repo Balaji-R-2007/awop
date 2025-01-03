@@ -39,20 +39,19 @@ const Chat = () => {
         </div>
 
         <div className="flex">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 p-2 border-1 rounded-l-lg focus:bg-black focus:text-white"
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-green-700 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 hover:scale-110"
-          >
-            Send
-          </button>
+        <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") sendMessage();
+        }}
+        placeholder="Type a message..."
+        className="flex-1 p-2 border-1 rounded-lg focus:bg-black focus:text-white"
+      />
+
         </div>
+       <p className="pl-30 pt-5">Enter to send message</p>
       </div>
     </div>
   );
