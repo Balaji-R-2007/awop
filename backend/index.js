@@ -1,32 +1,43 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const http = require("http");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const { Server } = require("socket.io");
+
+const Room = require("./models/Room");
 
 const app = express();
+app.use(cors());
+app.use(express.json());
+
 const server = http.createServer(app);
+
+// Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: '*',
-  },
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
-app.use(cors());
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
-// Handle WebSocket connections
-io.on('connection', (socket) => {
-  console.log(`User connected: ${socket.id}`);
-  
-  // Listen for messages and broadcast them
-  socket.on('message', (data) => {
-    io.emit('message', data); // Send to all clients
-  });
-
-  // Handle user disconnect
-  socket.on('disconnect', () => {
-    console.log(`User disconnected: ${socket.id}`);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
   });
 });
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Placeholder route
+app.get("/", (req, res) => res.send("Chat Server Running"));
+
+server.listen(5000, () => {
+  console.log("🚀 Server running on http://localhost:5000");
+});
