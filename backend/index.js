@@ -4,6 +4,7 @@ const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const { Server } = require("socket.io");
+const generateRoomCode = require("./utils/generateRoomCode");
 
 const Room = require("./models/Room");
 
@@ -37,6 +38,28 @@ io.on("connection", (socket) => {
 
 // Placeholder route
 app.get("/", (req, res) => res.send("Chat Server Running"));
+
+app.post("/rooms", async (req, res) => {
+  const { adminId } = req.body;
+  if (!adminId) return res.status(400).json({ error: "adminId is required" });
+
+  let roomCode;
+  let exists = true;
+
+  // Ensure room code is unique
+  while (exists) {
+    roomCode = generateRoomCode();
+    const room = await Room.findOne({ roomCode });
+    if (!room) exists = false;
+  }
+
+  const newRoom = new Room({ roomCode, adminId });
+  await newRoom.save();
+
+  const adminLink = `/admin/${roomCode}`;
+
+  res.json({ roomCode, adminLink });
+});
 
 server.listen(5000, () => {
   console.log("🚀 Server running on http://localhost:5000");
