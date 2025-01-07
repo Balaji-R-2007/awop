@@ -60,6 +60,18 @@ app.post("/rooms", async (req, res) => {
 
   res.json({ roomCode, adminLink });
 });
+app.post("/join", async (req, res) => {
+  const { roomCode } = req.body;
+  if (!roomCode) return res.status(400).json({ error: "Room code required" });
+
+  const room = await Room.findOne({ roomCode: roomCode.toUpperCase() });
+
+  if (!room) {
+    return res.status(404).json({ error: "Room not found" });
+  }
+
+  res.json({ success: true, message: "Room joined", roomCode });
+});
 
 server.listen(5000, () => {
   console.log("🚀 Server running on http://localhost:5000");
