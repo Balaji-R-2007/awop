@@ -29,12 +29,29 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+  io.on("connection", (socket) => {
+    console.log("User connected");
+  
+    socket.on("joinRoom", ({ roomCode, name }) => {
+      socket.join(roomCode);
+      console.log(`${name} joined room: ${roomCode}`);
+    });
+  
+    socket.on("roomMessage", ({ roomCode, name, message }) => {
+      const data = { name, message };
+      io.to(roomCode).emit("roomMessage", data);
+    });
+  
+    socket.on("leaveRoom", (roomCode) => {
+      socket.leave(roomCode);
+      console.log("User left room:", roomCode);
+    });
+  
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
   });
-});
+  
 
 // Placeholder route
 app.get("/", (req, res) => res.send("Chat Server Running"));
