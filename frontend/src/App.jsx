@@ -1,10 +1,17 @@
 import React from 'react'
-import Chat from './components/chat'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RoomAccess from "./pages/RoomAccess";
+import Chat from "./pages/Chat";
 const App = () => {
   return (
-    <div>
-      <Chat/>
-    </div>
+
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<RoomAccess />} />
+      <Route path="/chat/:roomCode" element={<Chat />} />
+    </Routes>
+  </BrowserRouter>
+
   )
 }
 export default App;
