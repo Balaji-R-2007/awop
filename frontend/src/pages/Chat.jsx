@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import qs from "query-string";
@@ -12,6 +12,7 @@ const Chat = () => {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null); // ✅ Auto-scroll reference
 
   useEffect(() => {
     if (!roomCode || !name) return;
@@ -28,6 +29,11 @@ const Chat = () => {
     };
   }, [roomCode, name]);
 
+  useEffect(() => {
+    // ✅ Auto-scroll to the latest message
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const sendMessage = () => {
     if (message.trim()) {
       socket.emit("roomMessage", { roomCode, name, message });
@@ -43,6 +49,7 @@ const Chat = () => {
     <div className="flex flex-col items-center h-screen bg-gray-100 p-5">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Room: {roomCode}</h2>
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-4">
+        {/* ✅ Chat Messages Box */}
         <div className="h-96 overflow-y-auto border p-2 mb-2 rounded">
           {messages.map((msg, index) => (
             <div
@@ -54,8 +61,11 @@ const Chat = () => {
               <strong>{msg.name}:</strong> {msg.message}
             </div>
           ))}
+          {/* ✅ Invisible div to auto-scroll */}
+          <div ref={messagesEndRef}></div>
         </div>
 
+        {/* ✅ Input & Send Button */}
         <div className="flex">
           <input
             value={message}
@@ -64,7 +74,7 @@ const Chat = () => {
             placeholder="Type a message..."
             className="flex-1 p-2 border rounded-l"
           />
-          
+        
         </div>
       </div>
     </div>
