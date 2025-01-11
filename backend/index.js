@@ -32,23 +32,71 @@ mongoose.connect(process.env.MONGO_URI, {
   io.on("connection", (socket) => {
     console.log("User connected");
   
-    socket.on("joinRoom", ({ roomCode, name }) => {
+    socket.on("joinRoom", async ({ roomCode, name }) => {
+      if (!roomCode || !name) return;
+  
+      const room = await Room.findOne({ roomCode });
+  
+      if (!room) {
+        return socket.emit("error", "Room not found");
+      }
+  
+      // Store users in the room
+      if (!room.users) room.users = [];
+      room.users.push({ id: socket.id, name });
+      await room.save();
+  
       socket.join(roomCode);
       console.log(`${name} joined room: ${roomCode}`);
+  
+      // Notify all users in the room
+      io.to(roomCode).emit("roomUsers", room.users);
     });
   
-    socket.on("roomMessage", ({ roomCode, name, message }) => {
-      const data = { name, message };
-      io.to(roomCode).emit("roomMessage", data);
-    });
+    socket.on("leaveRoom", async ({ roomCode, name }) => {
+      const room = await Room.findOne({ roomCode });
+      if (!room) return;
   
-    socket.on("leaveRoom", (roomCode) => {
+      // Remove user
+      room.users = room.users.filter((user) => user.id !== socket.id);
+      await room.save();
+  
       socket.leave(roomCode);
-      console.log("User left room:", roomCode);
+      console.log(`${name} left room: ${roomCode}`);
+  
+      io.to(roomCode).emit("roomUsers", room.users);
     });
   
-    socket.on("disconnect", () => {
+    // Kick a user (Admin only)
+    socket.on("kickUser", async ({ roomCode, targetId, adminId }) => {
+      const room = await Room.findOne({ roomCode });
+  
+      if (!room || room.adminId !== adminId) return; // Ensure only admin can kick
+  
+      // Remove target user
+      room.users = room.users.filter((user) => user.id !== targetId);
+      await room.save();
+  
+      // Notify the kicked user
+      io.to(targetId).emit("kicked");
+  
+      // Update all users
+      io.to(roomCode).emit("roomUsers", room.users);
+    });
+  
+    socket.on("disconnect", async () => {
       console.log("User disconnected");
+  
+      // Remove user from all rooms
+      const rooms = await Room.find();
+      for (const room of rooms) {
+        const user = room.users.find((user) => user.id === socket.id);
+        if (user) {
+          room.users = room.users.filter((u) => u.id !== socket.id);
+          await room.save();
+          io.to(room.roomCode).emit("roomUsers", room.users);
+        }
+      }
     });
   });
   
