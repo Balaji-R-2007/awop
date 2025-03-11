@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import qs from "query-string";
 
-const socket = io("http://localhost:5000"); // Make sure this URL matches your deployed backend
+const socket = io("https://awop.onrender.com"); // Make sure this URL matches your deployed backend
 
 const Chat = () => {
   const { roomCode } = useParams();
