@@ -43,7 +43,7 @@ const RoomAccess = () => {
 
   return (
     <div
-      className="min-h-screen flex-col items-center justify-center bg-gradient-to-br from-yellow-200 via-orange-300 to-red-400 bg-cover bg-center"
+      className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-yellow-200 via-orange-300 to-red-400 bg-cover bg-center"
       style={{
         backgroundImage:
           "url('/images.jpeg')", 
@@ -51,9 +51,11 @@ const RoomAccess = () => {
         backgroundPosition: "center",
       }}
     >
+      <div className="flex-col">
+
       <h1 className="text-center pt-10 text-7xl  font-bold mb-8 text-black drop-shadow-lg tracking-widest font-serif">
            Awop         </h1>
-      <div className=" ml-280 bg-black/50 border border-yellow-400 shadow-2xl rounded-3xl p-10 w-full max-w-2xl text-center text-white font-semibold">
+      <div className=" bg-black/50 border border-yellow-400 shadow-2xl rounded-3xl p-10 w-full max-w-2xl text-center text-white font-semibold">
         <h1 className="text-5xl animate-pulse font-bold mb-8 text-yellow-400 drop-shadow-lg tracking-widest font-serif">
           ☠️ Pirates Chat ☠️
         </h1>
@@ -79,15 +81,16 @@ const RoomAccess = () => {
           value={roomCode}
           onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
           className="w-full text-lg px-6 py-3 mb-6 rounded-xl bg-white/80 text-black placeholder-gray-700 focus:outline-none focus:ring-4 focus:ring-red-400"
-        />
+          />
 
         <button
           onClick={handleJoinRoom}
           className="w-full bg-red-600 text-white text-xl py-3 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg"
-        >
+          >
           🗺️ Join Treasure Room
         </button>
       </div>
+          </div>
     </div>
   );
 };
