@@ -42,39 +42,52 @@ const RoomAccess = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-4">Awop Chat</h1>
-      
-      <input
-        className="mb-2 p-2 border rounded w-64"
-        type="text"
-        placeholder="Your name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+    <div
+      className="min-h-screen flex-col items-center justify-center bg-gradient-to-br from-yellow-200 via-orange-300 to-red-400 bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('/images.jpeg')", 
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <h1 className="text-center pt-10 text-7xl  font-bold mb-8 text-black drop-shadow-lg tracking-widest font-serif">
+           Awop         </h1>
+      <div className=" ml-280 bg-black/50 border border-yellow-400 shadow-2xl rounded-3xl p-10 w-full max-w-2xl text-center text-white font-semibold">
+        <h1 className="text-5xl animate-pulse font-bold mb-8 text-yellow-400 drop-shadow-lg tracking-widest font-serif">
+          ☠️ Pirates Chat ☠️
+        </h1>
 
-      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Enter your pirate name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full text-lg px-6 py-3 mb-6 rounded-xl bg-white/80 text-black placeholder-gray-700 focus:outline-none focus:ring-4 focus:ring-yellow-400"
+        />
+
         <button
           onClick={handleCreateRoom}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="w-full bg-yellow-500 text-black text-xl py-3 rounded-xl font-bold hover:bg-yellow-600 transition-all mb-8 shadow-lg"
         >
-          Create Room
+          🏴‍☠️ Create treasure Room
+        </button>
+
+        <input
+          type="text"
+          placeholder="Enter Treasure Room Code"
+          value={roomCode}
+          onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+          className="w-full text-lg px-6 py-3 mb-6 rounded-xl bg-white/80 text-black placeholder-gray-700 focus:outline-none focus:ring-4 focus:ring-red-400"
+        />
+
+        <button
+          onClick={handleJoinRoom}
+          className="w-full bg-red-600 text-white text-xl py-3 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg"
+        >
+          🗺️ Join Treasure Room
         </button>
       </div>
-
-      <input
-        className="mb-2 p-2 border rounded w-64"
-        type="text"
-        placeholder="Room Code"
-        value={roomCode}
-        onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-      />
-      <button
-        onClick={handleJoinRoom}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Join Room
-      </button>
     </div>
   );
 };
