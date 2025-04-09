@@ -81,7 +81,7 @@ const Chat = () => {
         </div>
 
         {/* Chat Box */}
-        <div className="bg-white/10 p-4 rounded-xl mb-4 h-[400px] overflow-y-auto space-y-2">
+        <div className="bg-white/10 p-4 rounded-xl mb-4 h-[250px] overflow-y-auto space-y-2">
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -106,13 +106,8 @@ const Chat = () => {
             placeholder="Type your pirate message..."
             className="flex-1 p-3 rounded-l-xl text-white border font-bold focus-within:text-yellow-500 placeholder-gray-600 focus:outline-none"
           />
-          <button
-            onClick={sendMessage}
-            className="bg-yellow-500 hover:bg-yellow-600 px-6 text-xl rounded-r-xl font-bold text-black transition-all"
-          >
-            🦜 Send
-          </button>
         </div>
+         <p className="text-gray-400 text-center pt-2">Enter To Send Message</p>
       </div>
     </div>
   );
