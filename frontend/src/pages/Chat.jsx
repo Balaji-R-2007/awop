@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import qs from "query-string";
 
-const socket = io("https://awop.onrender.com"); // Your backend URL
+const socket = io("https://awop.onrender.com");
 
 const Chat = () => {
   const { roomCode } = useParams();
@@ -13,7 +13,7 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
-  const [admin, setAdmin] = useState(""); // ✅ Store admin name
+  const [admin, setAdmin] = useState("");
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Chat = () => {
 
     socket.on("roomUsers", (usersList) => {
       if (usersList.length > 0) {
-        setAdmin(usersList[0].name); // ✅ First user is admin
+        setAdmin(usersList[0].name);
       }
       setUsers(usersList);
     });
@@ -55,46 +55,62 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col items-center h-screen bg-gray-100 p-5">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Room: {roomCode}</h2>
+    <div
+      className="flex flex-col items-center h-screen p-5 text-white"
+      style={{
+        backgroundImage: `url("https://i.pinimg.com/originals/77/dd/3d/77dd3d3b3264caa95adca2026cdd5350.gif")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="w-full max-w-3xl bg-black/70 backdrop-blur-md rounded-2xl shadow-2xl p-6">
+        <h2 className="text-4xl font-extrabold text-yellow-400 text-center mb-6 tracking-widest">
+          ☠️ Pirate Chat Room: {roomCode}
+        </h2>
 
-      {/* ✅ Online Users Section */}
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-4 mb-4">
-        <h3 className="text-lg font-semibold">Online Users</h3>
-        <ul className="list-disc pl-5">
-          {users.map((user, index) => (
-            <li key={index} className="text-gray-700">
-              {user.name} {user.name === admin && "(Admin)"} {/* ✅ Show Admin */}
-            </li>
-          ))}
-        </ul>
-      </div>
+        {/* Online Users */}
+        <div className="mb-6 bg-white/10 p-4 rounded-xl">
+          <h3 className="text-xl font-bold text-yellow-300 mb-2">👥 Crew on Deck:</h3>
+          <ul className="list-disc pl-6 space-y-1 text-lg">
+            {users.map((user, index) => (
+              <li key={index} className="text-white">
+                {user.name} {user.name === admin && "🧭 (Captain)"}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-4">
-        <div className="h-96 overflow-y-auto border p-2 mb-2 rounded">
+        {/* Chat Box */}
+        <div className="bg-white/10 p-4 rounded-xl mb-4 h-[400px] overflow-y-auto space-y-2">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-2 my-1 ${
-                msg.name === name ? "bg-green-200" : "bg-blue-100"
-              } text-gray-800 rounded`}
+              className={`p-3 rounded-xl max-w-[80%] ${
+                msg.name === name
+                  ? "ml-auto bg-yellow-200 text-black font-semibold"
+                  : "mr-auto bg-blue-200 text-black"
+              }`}
             >
               <strong>{msg.name}:</strong> {msg.message}
             </div>
           ))}
-          <div ref={messagesEndRef}></div>
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className="flex">
+        {/* Message Input */}
+        <div className="flex mt-4">
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="flex-1 p-2 border rounded-l"
+            placeholder="Type your pirate message..."
+            className="flex-1 p-3 rounded-l-xl text-white border font-bold focus-within:text-yellow-500 placeholder-gray-600 focus:outline-none"
           />
-          <button onClick={sendMessage} className="px-4 py-2 bg-blue-500 text-white rounded-r">
-            Send
+          <button
+            onClick={sendMessage}
+            className="bg-yellow-500 hover:bg-yellow-600 px-6 text-xl rounded-r-xl font-bold text-black transition-all"
+          >
+            🦜 Send
           </button>
         </div>
       </div>
