@@ -1,13 +1,7 @@
-Here’s a complete `README.md` for your **One Piece Themed Chat App (Awop Chat)** — styled, informative, and beginner-friendly:
-
----
-
-```markdown
 # ☠️ Awop Chat - One Piece Themed Real-time Chat App
 
 Awop Chat is a real-time chat application where users can create or join rooms using room codes. Designed with an anime-inspired One Piece theme, this app brings a fun pirate twist to your chatting experience!
 
-![Awop Chat Screenshot](https://user-images.githubusercontent.com/your-screenshot-placeholder.png) <!-- Add screenshot if available -->
 
 ---
 
@@ -93,10 +87,9 @@ This project is licensed under the **MIT License**.
 ## ☎️ Contact
 
 Made with ❤️ by **Balaji R**  
-📧 [balaji648balaji@gmail.com]  
+📧 balaji648balaji@gmail.com
 🐙 GitHub: [github.com/balaji-r-2007](https://github.com/balaji-r-2007)
 
 ---
 
 > “**I’m gonna be the Pirate King!**” – Monkey D. Luffy  
-```
