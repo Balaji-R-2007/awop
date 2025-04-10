@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import qs from "query-string";
 
-const socket = io("https://awop.onrender.com");
+const socket = io("http://localhost:5000"); // Make sure this URL matches your deployed backend
 
 const Chat = () => {
   const { roomCode } = useParams();
@@ -107,7 +107,7 @@ const Chat = () => {
             className="flex-1 p-3 rounded-l-xl text-white border font-bold focus-within:text-yellow-500 placeholder-gray-600 focus:outline-none"
           />
         </div>
-         <p className="text-gray-400 text-center pt-2">Enter To Send Message</p>
+        <p className="text-gray-400 text-center pt-2">Enter To Send Message</p>
       </div>
     </div>
   );
