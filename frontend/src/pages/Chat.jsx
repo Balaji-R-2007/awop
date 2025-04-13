@@ -6,7 +6,7 @@ import ReactPlayer from "react-player";
 import { io } from "socket.io-client";
 
 // Initialize Socket.IO client
-const socket = io("http://localhost:5000", {
+const socket = io("https://awop.onrender.com", {
   transports: ["websocket"],
   withCredentials: true,
   reconnection: true,
