@@ -12,7 +12,7 @@ const RoomAccess = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("https://awop.onrender.com/rooms", {
+      const res = await fetch("http://localhost:5000/rooms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ adminId: name }),
@@ -36,7 +36,7 @@ const RoomAccess = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("https://awop.onrender.com/join", {
+      const res = await fetch("http://localhost:5000/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomCode }),
