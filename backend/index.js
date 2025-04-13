@@ -15,9 +15,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // Adjust to your frontend URL if needed.
+    origin: "*", // Adjust to your frontend URL if needed
     methods: ["GET", "POST"],
   },
+  pingTimeout: 60000, // Increase timeout to prevent premature disconnects
 });
 
 // Connect to MongoDB
@@ -31,7 +32,7 @@ mongoose
 
 // Define Room Schema & Model
 const RoomSchema = new mongoose.Schema({
-  roomCode: { type: String, required: true },
+  roomCode: { type: String, required: true, unique: true },
   admin: { type: String, required: true },
   users: [{ id: String, name: String }],
 });
@@ -47,7 +48,6 @@ io.on("connection", (socket) => {
       roomCode = roomCode.toUpperCase(); // Consistent room code
       let room = await Room.findOne({ roomCode });
       if (!room) {
-        // Create room if it doesn't exist; current user becomes admin.
         room = new Room({
           roomCode,
           admin: name,
@@ -55,7 +55,6 @@ io.on("connection", (socket) => {
         });
         await room.save();
       } else {
-        // Prevent duplicate user entries.
         const alreadyJoined = room.users.some(
           (user) => user.id === socket.id || user.name === name
         );
@@ -66,7 +65,6 @@ io.on("connection", (socket) => {
       }
       socket.join(roomCode);
       console.log(`${name} joined room: ${roomCode}`);
-      // Emit updated user list to all users in the room.
       io.to(roomCode).emit("roomUsers", room.users);
     } catch (error) {
       console.error("Error in joinRoom:", error);
@@ -80,6 +78,18 @@ io.on("connection", (socket) => {
     io.to(roomCode).emit("roomMessage", { name, message });
   });
 
+  // Handle video selection
+  socket.on("videoSelected", ({ roomCode, videoId }) => {
+    roomCode = roomCode.toUpperCase();
+    io.to(roomCode).emit("videoSelected", { videoId });
+  });
+
+  // Handle video control (play, pause, seek)
+  socket.on("videoControl", ({ roomCode, action, time }) => {
+    roomCode = roomCode.toUpperCase();
+    io.to(roomCode).emit("videoControl", { action, time });
+  });
+
   // Admin kicks a user (Admin Only)
   socket.on("kickUser", async ({ roomCode, adminName, userId }) => {
     try {
@@ -88,11 +98,9 @@ io.on("connection", (socket) => {
       if (room && room.admin === adminName) {
         room.users = room.users.filter((user) => user.id !== userId);
         await room.save();
-        // Notify the kicked user.
         io.to(userId).emit("kicked", {
           message: "You have been kicked out of the room.",
         });
-        // Update the room users list.
         io.to(roomCode).emit("roomUsers", room.users);
       }
     } catch (error) {
@@ -100,7 +108,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // When a user leaves the room.
+  // When a user leaves the room
   socket.on("leaveRoom", async ({ roomCode }) => {
     try {
       roomCode = roomCode.toUpperCase();
@@ -111,7 +119,6 @@ io.on("connection", (socket) => {
         socket.leave(roomCode);
         console.log("🚪 User left room:", roomCode);
         io.to(roomCode).emit("roomUsers", room.users);
-        // Delete the room if no users remain.
         if (room.users.length === 0) {
           await Room.deleteOne({ roomCode });
           console.log("🗑️ Deleted empty room:", roomCode);
@@ -122,7 +129,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Handle user disconnection.
+  // Handle user disconnection
   socket.on("disconnect", async () => {
     try {
       const rooms = await Room.find({ "users.id": socket.id });
@@ -142,10 +149,10 @@ io.on("connection", (socket) => {
   });
 });
 
-// Health-check endpoint.
+// Health-check endpoint
 app.get("/", (req, res) => res.send("Chat Server Running"));
 
-// REST API to create a room (for RoomAccess page)
+// REST API to create a room
 app.post("/rooms", async (req, res) => {
   try {
     const { adminId } = req.body;
@@ -154,24 +161,26 @@ app.post("/rooms", async (req, res) => {
 
     let roomCode;
     let exists = true;
-    // Generate a unique room code in uppercase.
     while (exists) {
       roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
       const room = await Room.findOne({ roomCode });
       if (!room) exists = false;
     }
-    const newRoom = new Room({ roomCode, admin: adminId, users: [] });
+    const newRoom = new Room({
+      roomCode,
+      admin: adminId,
+      users: [{ id: adminId, name: adminId }], // Add admin as a user
+    });
     await newRoom.save();
 
-    const adminLink = `/admin/${roomCode}`;
-    res.json({ roomCode, adminLink });
+    res.json({ roomCode });
   } catch (error) {
     console.error("Error creating room:", error);
     res.status(500).json({ error: "Failed to create room" });
   }
 });
 
-// REST API to join a room (for RoomAccess page)
+// REST API to join a room
 app.post("/join", async (req, res) => {
   try {
     const { roomCode } = req.body;
