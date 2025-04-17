@@ -4,6 +4,7 @@ import qs from "query-string";
 import axios from "axios";
 import ReactPlayer from "react-player";
 import { io } from "socket.io-client";
+import { motion } from "framer-motion";
 
 // Initialize Socket.IO client
 const socket = io("https://awop.onrender.com", {
@@ -137,7 +138,7 @@ const Chat = () => {
 
   return (
     <div
-      className="flex flex-col items-center h-screen p-5 text-white"
+      className="flex flex-col items-center h-screen px-3 py-5 md:p-5 text-white"
       style={{
         backgroundImage:
           'url("https://i.pinimg.com/originals/77/dd/3d/77dd3d3b3264caa95adca2026cdd5350.gif")',
@@ -145,27 +146,37 @@ const Chat = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className="w-full max-w-3xl bg-black/70 backdrop-blur-md rounded-2xl shadow-2xl p-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+        className="w-full max-w-3xl bg-black/70 backdrop-blur-md rounded-2xl shadow-2xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-4xl font-extrabold text-yellow-400 tracking-widest">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2 }}
+            className="text-4xl font-extrabold text-yellow-400 tracking-widest">
             ☠️ Pirate Chat Room: {roomCode}
-          </h2>
-          <button
+          </motion.h2>
+          <motion.button
             className="bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold hover:bg-yellow-500"
             onClick={() => setWatchVideoMode(!watchVideoMode)}
+            whileHover={{ scale: 1, y: -2, opacity: 0.95 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
           >
             {watchVideoMode ? "Hide Video" : "Watch Video"}
-          </button>
+          </motion.button>
         </div>
 
-        <div className="flex w-full space-x-4">
+        <div className="flex flex-col md:flex-row w-full space-y-6 md:space-y-0 md:space-x-4">
           {watchVideoMode && (
-            <div className="w-2/3">
+            <div className="w-full md:w-2/3">
               <div className="flex flex-col space-y-4">
                 <input
                   type="text"
                   placeholder="Search for videos..."
-                  className="p-2 text-black rounded-xl"
+                  className="w-full p-2 rounded-l-xl text-white border font-bold focus-within:text-yellow-500 placeholder-gray-600 focus:outline-none bg-black/50"
                   value={videoUrl}
                   onChange={(e) => {
                     setVideoUrl(e.target.value);
@@ -219,12 +230,23 @@ const Chat = () => {
               </div>
             </div>
           )}
-          <div className={watchVideoMode ? "w-1/3" : "w-full"}>
+          <div className={watchVideoMode ? "w-full md:w-1/3" : "w-full"}>
             <div className="flex flex-col space-y-4">
-              <div className="bg-white/10 p-4 rounded-xl">
-                <h3 className="text-xl font-bold text-yellow-300 mb-2">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2 }}
+                className="bg-white/10 p-4 rounded-xl">
+                <motion.h3 className="text-xl font-bold text-yellow-300 mb-2" initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 2,
+                  delay: 1,
+                  type: "tween",
+                  ease: "easeInOut",
+                }}>
                   👥 Crew on Deck:
-                </h3>
+                </motion.h3>
                 <ul className="list-disc pl-6 space-y-1 text-lg">
                   {users.map((user, index) => (
                     <li key={index} className="text-white">
@@ -232,12 +254,12 @@ const Chat = () => {
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div className="bg-white/10 p-4 rounded-xl h-[250px] overflow-y-auto space-y-2">
+              </motion.div>
+              <div className="bg-white/10 p-4 rounded-xl max-h-[180px] md:max-h-[250px] overflow-y-auto space-y-2">
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-xl max-w-[80%] ${
+                    className={`p-2 rounded-xl max-w-[80%] text-sm md:text-base ${
                       msg.name === name
                         ? "ml-auto bg-yellow-200 text-black font-semibold"
                         : "mr-auto bg-blue-200 text-black"
@@ -263,7 +285,7 @@ const Chat = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
