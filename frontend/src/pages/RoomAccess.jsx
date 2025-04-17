@@ -97,8 +97,9 @@ const RoomAccess = () => {
           <motion.button
             onClick={handleCreateRoom}
             disabled={loading}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.80 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={`w-full text-xl py-3 rounded-xl font-bold transition-all mb-8 shadow-lg ${
               loading
                 ? "bg-yellow-300 cursor-not-allowed"
@@ -119,8 +120,9 @@ const RoomAccess = () => {
           <motion.button
             onClick={handleJoinRoom}
             disabled={loading}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.80 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={`w-full text-xl py-3 rounded-xl font-bold transition-all shadow-lg ${
               loading
                 ? "bg-red-400 cursor-not-allowed"
